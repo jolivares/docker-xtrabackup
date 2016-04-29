@@ -13,8 +13,8 @@ if [[ $backup_file == *.tar.gz ]]; then
 fi
 
 if [ "$format" = "tar" ]; then
-    echo "Extracting to ${dst_dir}..."
-    tar -izxvf $backup_file -C $dst_dir
+    echo "Extracting /backup/${backup_file} to ${dst_dir}..."
+    tar -izxvf /backup/$backup_file -C $dst_dir
     if [ $? -ne 0 ]; then
         echo "Error: extracting backup file '$backup_file' to '$dst_dir' failed!!!" >&2
         rm -rf $tmp_dir
