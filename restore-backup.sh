@@ -37,6 +37,8 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+binlog_coordinates=$(cat $dst_dir/xtrabackup_binlog_info)
+echo "Binlog: ${binlog_coordinates}"
 echo "Backup is ready!!" >&2
 
 chown -R mysql:mysql $dst_dir
