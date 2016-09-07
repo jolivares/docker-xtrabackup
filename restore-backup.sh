@@ -39,10 +39,11 @@ fi
 
 binlog_coordinates=$(cat $dst_dir/xtrabackup_binlog_info)
 echo "Binlog: ${binlog_coordinates}"
-echo "Backup is ready!!" >&2
+echo "####### BACKUP IS READY!!" >&2
 
 chown -R mysql:mysql $dst_dir
 
-su -c "mysqld_safe --defaults-file=$dst_dir/backup-my.cnf --user=mysql --datadir=$dst_dir --skip-grant-tables" -m mysql
+su -c "mysqld_safe --log-error=/var/log/mysql/error.log --user=mysql --datadir=$dst_dir --skip-grant-tables" -m mysql
+cat /var/log/mysql/error.log
 
 
