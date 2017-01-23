@@ -4,24 +4,23 @@ FROM debian:jessie
 RUN groupadd -r mysql && useradd -r -g mysql mysql
 
 # install "pwgen" for randomizing passwords
-RUN apt-get update && apt-get install -y pwgen && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y pwgen wget && rm -rf /var/lib/apt/lists/*
 
-RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys 430BDF5C56E7C94E848EE60C1C4CBDCDCD2EFD2A
-
-RUN echo 'deb http://repo.percona.com/apt jessie main' > /etc/apt/sources.list.d/percona.list
+RUN apt-key adv --keyserver keys.gnupg.net --recv-keys 8507EFA5
 
 ENV PERCONA_MAJOR 5.6
-ENV PERCONA_VERSION 5.6.29-76.2-1.jessie
+ENV PERCONA_VERSION 5.6.33-79.0
 
-# the "/var/lib/mysql" stuff here is because the mysql-server postinst doesn't have an explicit way to disable the mysql_install_db codepath besides having a database already "configured" (ie, stuff in /var/lib/mysql/mysql)
-# also, we set debconf keys to make APT a little quieter
+RUN wget https://repo.percona.com/apt/percona-release_0.1-4.jessie_all.deb
+RUN dpkg -i percona-release_0.1-4.jessie_all.deb
+
 RUN { \
 		echo percona-server-server-$PERCONA_MAJOR percona-server-server/root_password password 'unused'; \
 		echo percona-server-server-$PERCONA_MAJOR percona-server-server/root_password_again password 'unused'; \
 	} | debconf-set-selections \
 	&& apt-get update \
 	&& apt-get install -y \
-		percona-server-server-$PERCONA_MAJOR=$PERCONA_VERSION \
+		percona-server-server-$PERCONA_MAJOR \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& rm -rf /var/lib/mysql \
 	&& mkdir /var/lib/mysql
